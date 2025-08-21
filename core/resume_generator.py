@@ -1,5 +1,4 @@
 from io import BytesIO
-from jinja2 import Environment, FileSystemLoader
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER

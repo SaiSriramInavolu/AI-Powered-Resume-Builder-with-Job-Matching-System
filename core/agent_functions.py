@@ -7,8 +7,6 @@ from core.scorer import score_match
 from typing import TypedDict, Any
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
-from PIL import Image
-from io import BytesIO
 from app.utils import logger
 from core.vector_db import VectorDB
 
@@ -57,9 +55,25 @@ def matcher_node(state: GraphState):
     logger.info("---MATCHING RESUME TO JOB DESCRIPTION---")
     resume_text = state["resume_data"]["text"]
     jd_text = state["jd_data"]["text"]
-    
-    # Use the vector_db's embedding model for consistency
-    similarity_score = match_resume_to_jd(resume_text, jd_text, vector_db.model)
+    resume_doc_id = state["resume_data"].get("id") # Get the document ID from parsed resume data
+
+    # Query vector DB for semantically similar resumes based on JD
+    # We'll retrieve more results than strictly needed to ensure we capture relevant ones
+    # even if their exact score isn't top-tier in the initial retrieval.
+    retrieved_results = vector_db.query_documents(jd_text, n_results=10)
+    retrieved_ids = [res for res in retrieved_results["ids"]]
+
+    similarity_score = 0.0 # Default to 0 if not semantically relevant
+
+    if resume_doc_id and resume_doc_id in retrieved_ids:
+        logger.info(f"Resume {resume_doc_id} found in top semantically relevant resumes.")
+        # Use the vector_db's embedding model for consistency
+        similarity_score = match_resume_to_jd(resume_text, jd_text, vector_db.model)
+    else:
+        logger.info(f"Resume {resume_doc_id} not found in top semantically relevant resumes. Assigning 0 score.")
+        # If the resume is not semantically relevant, assign a very low score
+        similarity_score = 0.0
+
     return {"similarity_score": similarity_score}
 
 

@@ -140,8 +140,8 @@ if page_selection == "Resume Matcher":
                 st.write("**Common Keywords:**", row["Common Keywords"])
             
             if google_api_key and row["Enhancement Suggestions"] != "N/A":
-                st.subheader("Content Enhancement Suggestions")
-                st.markdown(row["Enhancement Suggestions"])
+                with st.expander("Content Enhancement Suggestions"):
+                    st.markdown(row["Enhancement Suggestions"])
             st.markdown("---")
     elif st.session_state.all_match_results_session is None and st.session_state.df_results_session is None:
         logger.info("No match results in session. Prompting user to upload and match.")
@@ -310,13 +310,13 @@ elif page_selection == "Workflow Visualization":
 
     # Define node descriptions and colors for a unique and cool look
     node_descriptions = {
-        "_start_": "The entry point of the workflow.",
-        "resume_parser": "Extracts structured data from PDF resumes.",
-        "jd_parser": "Extracts key information from text-based job descriptions.",
-        "matcher": "Compares resumes against job descriptions to find similarities.",
-        "scorer": "Provides a score indicating the compatibility between a resume and a job description.",
-        "content_enhancement": "Offers AI-driven suggestions to improve a resume's alignment with a job description.",
-        "_end_": "The end point of the workflow."
+        "_start_": "The entry point of the workflow. Initializes the GraphState.",
+        "resume_parser": "Parses the uploaded PDF resume or text resume. Extracts text, skills, and keywords, and adds the resume data to the vector database. Outputs `resume_data` to the GraphState.",
+        "jd_parser": "Parses the provided job description text. Extracts text, skills, and keywords, and adds the job description data to the vector database. Outputs `jd_data` to the GraphState.",
+        "matcher": "Performs semantic matching between the resume and job description. Queries the vector database to determine semantic relevance. Calculates a similarity score. Outputs `similarity_score` to the GraphState.",
+        "scorer": "Calculates a final match score based on resume data, job description data, and the similarity score. Outputs `final_score` to the GraphState.",
+        "content_enhancement": "Generates AI-driven suggestions to enhance the resume based on the job description. Outputs `enhancement_suggestions` to the GraphState.",
+        "_end_": "The end point of the workflow. The final results are available in the GraphState."
     }
 
     # Enhanced color palette and styling
