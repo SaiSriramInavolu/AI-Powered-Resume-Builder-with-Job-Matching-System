@@ -6,7 +6,7 @@ import plotly.express as px
 import graphviz # Import graphviz
 
 # Import functions from the new library file
-from lib.agent_functions import create_graph, get_graph_representation # Changed import
+from core.agent_functions import create_graph, get_graph_representation
 
 # Import functions from core and app/utils
 from core.resume_generator import create_pdf_resume, create_latex_resume
