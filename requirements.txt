@@ -1,19 +1,28 @@
 streamlit
 langchain
 langgraph
-openai
-anthropic
 sentence-transformers
 plotly
 graphviz
-
-pinecone-client
-faiss-cpu
 pypdf
 pandas
-numpy
-nltk
 spacy
 reportlab
-weasyprint
 python-dotenv
+chromadb
+
+# For resume generation
+reportlab
+
+# For Google API Key
+langchain-google-genai
+
+# For logging
+loguru
+
+# For image processing (if needed for resume parsing)
+Pillow
+
+# For testing
+pytest
+pytest-mock

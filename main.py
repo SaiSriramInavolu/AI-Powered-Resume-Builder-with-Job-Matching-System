@@ -9,7 +9,7 @@ import graphviz # Import graphviz
 from core.agent_functions import create_graph, get_graph_representation
 
 # Import functions from core and app/utils
-from core.resume_generator import create_pdf_resume, create_latex_resume
+from core.resume_generator import create_pdf_resume
 from app.utils import save_match_result, load_match_results, logger
 
 load_dotenv() # Load environment variables at the application start
@@ -299,18 +299,7 @@ elif page_selection == "Resume Builder":
             mime="application/pdf",
         )
 
-        # LaTeX Resume Generation
-        latex_content = create_latex_resume(resume_data)
-        st.download_button(
-            label="Download Resume as LaTeX (.tex)",
-            data=latex_content.encode("utf-8"),
-            file_name=f"{(name or 'Resume').replace(' ', '_')}_Resume.tex",
-            mime="application/x-tex",
-        )
-        st.info(
-            "To compile the .tex file to PDF, install a LaTeX distribution (TeX Live/MiKTeX) "
-            "or use an online compiler like Overleaf."
-        )
+        
 
 # --- Workflow Visualization Page ---
 elif page_selection == "Workflow Visualization":

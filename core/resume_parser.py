@@ -1,6 +1,9 @@
+import hashlib
 from pypdf import PdfReader
 import spacy
 from typing import IO
+
+from core.vector_db import VectorDB
 
 # Load spaCy model once
 try:
@@ -10,6 +13,8 @@ except OSError:
     spacy.cli.download('en_core_web_sm')
     nlp = spacy.load('en_core_web_sm')
 
+# Initialize VectorDB
+vector_db = VectorDB()
 
 def parse_pdf_resume(file: IO[bytes]) -> dict:
     """Parses a PDF resume to extract text, skills, and keywords.
@@ -43,8 +48,15 @@ def parse_text_resume(text: str) -> dict:
     skills = [ent.text for ent in doc.ents if ent.label_ in ['ORG', 'PRODUCT', 'GPE', 'NORP']] # Expanded entities for skills
     keywords = [token.text for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'PROPN', 'ADJ']] # Expanded POS for keywords
 
-    return {
+    parsed_data = {
         'text': text,
         'skills': list(set(skills)),
         'keywords': list(set(keywords))
     }
+
+    # Add to vector DB
+    document_id = hashlib.sha256(text.encode()).hexdigest()
+    combined_text = f"""Skills: {", ".join(parsed_data["skills"])}. Keywords: {", ".join(parsed_data["keywords"])}. {parsed_data["text"]}"""
+    vector_db.add_document(document_id, combined_text, {"type": "resume", "id": document_id})
+
+    return parsed_data

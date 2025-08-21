@@ -10,6 +10,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from PIL import Image
 from io import BytesIO
 from app.utils import logger
+from core.vector_db import VectorDB
+
+# Initialize VectorDB
+vector_db = VectorDB()
 
 class GraphState(TypedDict):
     resume_file: Any # Keep for file uploads
@@ -53,7 +57,9 @@ def matcher_node(state: GraphState):
     logger.info("---MATCHING RESUME TO JOB DESCRIPTION---")
     resume_text = state["resume_data"]["text"]
     jd_text = state["jd_data"]["text"]
-    similarity_score = match_resume_to_jd(resume_text, jd_text)
+    
+    # Use the vector_db's embedding model for consistency
+    similarity_score = match_resume_to_jd(resume_text, jd_text, vector_db.model)
     return {"similarity_score": similarity_score}
 
 
