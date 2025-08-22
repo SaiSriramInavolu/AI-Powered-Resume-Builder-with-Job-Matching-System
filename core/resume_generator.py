@@ -78,9 +78,9 @@ def create_pdf_resume(data: dict) -> BytesIO:
         )
     )
     if data.get('github'):
-        story.append(Paragraph(f"GitHub: <link href=\"{data['github']}\">{data['github']}</link>", styles["ContactInfo"]))
+        story.append(Paragraph(f"<link href=\"{data['github']}\">GitHub</link>", styles["ContactInfo"]))
     if data.get('linkedin'):
-        story.append(Paragraph(f"LinkedIn: <link href=\"{data['linkedin']}\">{data['linkedin']}</link>", styles["ContactInfo"]))
+        story.append(Paragraph(f"<link href=\"{data['linkedin']}\">LinkedIn</link>", styles["ContactInfo"]))
     story.append(Spacer(1, 0.2 * inch))
 
     # Summary
