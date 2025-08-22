@@ -26,7 +26,7 @@ def create_pdf_resume(data: dict) -> BytesIO:
             name="MyHeading1",
             fontSize=28,
             leading=32,
-            fontName="Times-Bold",
+            fontName="Helvetica-Bold",
             alignment=TA_CENTER,
         )
     )
@@ -35,7 +35,7 @@ def create_pdf_resume(data: dict) -> BytesIO:
             name="MyHeading2",
             fontSize=16,
             leading=20,
-            fontName="Times-Bold",
+            fontName="Helvetica-Bold",
             alignment=TA_LEFT,
         )
     )
@@ -44,7 +44,7 @@ def create_pdf_resume(data: dict) -> BytesIO:
             name="BodyTextSmall",
             fontSize=11,
             leading=14,
-            fontName="Times-Roman",
+            fontName="Helvetica",
             alignment=TA_LEFT,
         )
     )
@@ -53,9 +53,9 @@ def create_pdf_resume(data: dict) -> BytesIO:
             name="BodyTextBullet",
             fontSize=11,
             leading=14,
-            fontName="Times-Roman",
+            fontName="Helvetica",
             alignment=TA_LEFT,
-            leftIndent=20,
+            leftIndent=25,
         )
     )
     styles.add(
@@ -63,8 +63,8 @@ def create_pdf_resume(data: dict) -> BytesIO:
             name="ContactInfo",
             fontSize=11,
             leading=14,
-            fontName="Times-Roman",
-            alignment=TA_LEFT,
+            fontName="Helvetica",
+            alignment=TA_CENTER,
         )
     )
 
@@ -72,22 +72,19 @@ def create_pdf_resume(data: dict) -> BytesIO:
 
     # Name and Contact Info
     story.append(Paragraph(data.get("name", "") or "", styles["MyHeading1"]))
-    story.append(
-        Paragraph(
-            f"{data.get('email', '')} | {data.get('phone', '')}", styles["ContactInfo"]
-        )
-    )
-    if data.get('github'):
-        story.append(Paragraph(f"<link href=\"{data['github']}\">GitHub</link>", styles["ContactInfo"]))
-    if data.get('linkedin'):
-        story.append(Paragraph(f"<link href=\"{data['linkedin']}\">LinkedIn</link>", styles["ContactInfo"]))
-    story.append(Spacer(1, 0.2 * inch))
+    story.append(Paragraph(
+        f"{data.get('email', '')} | {data.get('phone', '')}"+\
+        f" | <link href=\"{data['github']}\">GitHub</link>" if data.get('github') else ""+\
+        f" | <link href=\"{data['linkedin']}\">LinkedIn </link>" if data.get('linkedin') else "",
+        styles["ContactInfo"]
+    ))
+    story.append(Spacer(1, 0.3 * inch))
 
     # Summary
     if data.get("summary"):
         story.append(Paragraph("Summary", styles["MyHeading2"]))
         story.append(Paragraph(data["summary"], styles["BodyTextSmall"]))
-        story.append(Spacer(1, 0.1 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Experience
     if data.get("experience"):
@@ -103,8 +100,8 @@ def create_pdf_resume(data: dict) -> BytesIO:
                 for line in (exp["description"] or "").split("\n"):
                     if line.strip():
                         story.append(Paragraph(line, styles["BodyTextBullet"]))
-            story.append(Spacer(1, 0.05 * inch))
-        story.append(Spacer(1, 0.1 * inch))
+            story.append(Spacer(1, 0.08 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Education
     if data.get("education"):
@@ -120,8 +117,8 @@ def create_pdf_resume(data: dict) -> BytesIO:
                 for line in (edu["description"] or "").split("\n"):
                     if line.strip():
                         story.append(Paragraph(line, styles["BodyTextBullet"]))
-            story.append(Spacer(1, 0.05 * inch))
-        story.append(Spacer(1, 0.1 * inch))
+            story.append(Spacer(1, 0.08 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Projects
     if data.get("projects"):
@@ -146,8 +143,8 @@ def create_pdf_resume(data: dict) -> BytesIO:
                         styles["BodyTextBullet"],
                     )
                 )
-            story.append(Spacer(1, 0.05 * inch))
-        story.append(Spacer(1, 0.1 * inch))
+            story.append(Spacer(1, 0.08 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Certifications
     if data.get("certifications"):
@@ -159,14 +156,14 @@ def create_pdf_resume(data: dict) -> BytesIO:
                     styles["BodyTextSmall"],
                 )
             )
-            story.append(Spacer(1, 0.05 * inch))
-        story.append(Spacer(1, 0.1 * inch))
+            story.append(Spacer(1, 0.08 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Skills
     if data.get("skills"):
         story.append(Paragraph("Skills", styles["MyHeading2"]))
         story.append(Paragraph(data["skills"], styles["BodyTextSmall"]))
-        story.append(Spacer(1, 0.1 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Languages
     if data.get("languages"):
@@ -178,8 +175,8 @@ def create_pdf_resume(data: dict) -> BytesIO:
                     styles["BodyTextSmall"],
                 )
             )
-            story.append(Spacer(1, 0.05 * inch))
-        story.append(Spacer(1, 0.1 * inch))
+            story.append(Spacer(1, 0.08 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     # Awards
     if data.get("awards"):
@@ -191,8 +188,8 @@ def create_pdf_resume(data: dict) -> BytesIO:
                     styles["BodyTextSmall"],
                 )
             )
-            story.append(Spacer(1, 0.05 * inch))
-        story.append(Spacer(1, 0.1 * inch))
+            story.append(Spacer(1, 0.08 * inch))
+        story.append(Spacer(1, 0.15 * inch))
 
     doc.build(story)
     buffer.seek(0)
