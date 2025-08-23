@@ -220,8 +220,15 @@ elif page_selection == "Resume Builder":
                 st.session_state.project_entries.append({})
                 st.rerun()
 
-
         skills = st.text_area("Skills (comma-separated)")
+
+        # --- AI refinement choice INSIDE form ---
+        use_ai = None
+        if summary:
+            use_ai = st.radio(
+                "Would you like AI to refine your summary?",
+                ("No, keep my summary", "Yes, refine with AI")
+            )
 
         submitted = st.form_submit_button("Generate Resume")
 
@@ -238,6 +245,19 @@ elif page_selection == "Resume Builder":
             "projects": st.session_state.project_entries,
             "skills": skills,
         }
+
+        from core.resume_generator import generate_ai_summary
+
+        if not summary:  # No summary → auto-generate
+            with st.spinner("Generating professional summary with AI..."):
+                resume_data["summary"] = generate_ai_summary(resume_data)
+                st.success("AI-generated summary added!")
+        elif use_ai == "Yes, refine with AI":
+            with st.spinner("Refining summary with AI..."):
+                resume_data["summary"] = generate_ai_summary(resume_data, user_summary=summary)
+                st.success("AI-refined summary added!")
+
+        # --- Generate PDF ---
         pdf_buffer = create_pdf_resume(resume_data)
         st.download_button(
             label="Download Resume as PDF",
@@ -245,6 +265,8 @@ elif page_selection == "Resume Builder":
             file_name=f"{(name or 'Resume').replace(' ', '_')}_Resume.pdf",
             mime="application/pdf",
         )
+
+
 
         
 

@@ -7,8 +7,63 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+import google.generativeai as genai
+import os
 
+def generate_ai_summary(data: dict, user_summary: str = "") -> str:
+    """
+    Generate a professional summary using Gemini 2.5 Flash.
+    If user_summary is provided, refine it using AI with other form data.
+    Otherwise, generate a fresh summary.
+    """
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        return "Experienced professional with a passion for technology and innovation."  # fallback
 
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-2.5-flash")
+
+    # Build context
+    education = "; ".join(
+        [f"{e.get('degree','')} in {e.get('stream','')} from {e.get('university','')} ({e.get('graduation_year','')})"
+         for e in data.get("education", []) if e]
+    )
+    experience = "; ".join(
+        [f"{x.get('title','')} at {x.get('company','')} ({x.get('years','')})"
+         for x in data.get("experience", []) if x]
+    )
+    projects = "; ".join(
+        [f"{p.get('name','')} ({p.get('technologies','')})"
+         for p in data.get("projects", []) if p]
+    )
+    skills = data.get("skills", "")
+
+    # Construct prompt
+    if user_summary:
+        prompt = f"""The user has written this summary:
+{user_summary}
+
+Please refine and improve it into a professional resume summary. 
+Incorporate key details from their education, experience, projects, and skills:
+
+Education: {education}
+Experience: {experience}
+Projects: {projects}
+Skills: {skills}
+
+Return only the polished professional summary text."""
+    else:
+        prompt = f"""Generate a professional resume summary from the following details:
+
+Education: {education}
+Experience: {experience}
+Projects: {projects}
+Skills: {skills}
+
+Return only the professional summary text."""
+
+    response = model.generate_content(prompt)
+    return response.text.strip() if response and response.text else ""
 def create_pdf_resume(data: dict) -> BytesIO:
     buffer = BytesIO()
     doc = SimpleDocTemplate(
