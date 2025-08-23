@@ -173,7 +173,9 @@ elif page_selection == "Resume Builder":
                 with st.container():
                     st.write(f"Education #{i + 1}")
                     entry['degree'] = st.text_input(f"Degree", key=f"edu_degree_{i}")
+                    entry['stream'] = st.text_input(f"Stream/Specialization", key=f"edu_stream_{i}")
                     entry['university'] = st.text_input(f"University", key=f"edu_university_{i}")
+                    entry['cgpa'] = st.text_input(f"CGPA/Percentage", key=f"edu_cgpa_{i}")
                     entry['graduation_year'] = st.text_input(f"Graduation Year", key=f"edu_grad_year_{i}")
                     entry['description'] = st.text_area(f"Description (e.g., coursework, honors)", key=f"edu_desc_{i}")
                     if st.form_submit_button(f"Remove Education #{i + 1}"):

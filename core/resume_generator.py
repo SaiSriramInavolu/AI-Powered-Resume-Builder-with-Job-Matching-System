@@ -1,5 +1,8 @@
 from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
 from reportlab.lib.units import inch
@@ -93,18 +96,58 @@ def create_pdf_resume(data: dict) -> BytesIO:
         add_section("SUMMARY")
         story.append(Paragraph(data["summary"], styles["ContentText"]))
 
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
     # Education
     if data.get("education"):
         add_section("EDUCATION")
+        max_width = 400  # threshold in points (~5.5 inches of text area)
+
         for edu in data["education"]:
-            story.append(Paragraph(
-                f"<b>{edu.get('degree','')}</b>, {edu.get('university','')} ({edu.get('graduation_year','')})",
-                styles["ContentText"]
-            ))
+            degree_line = f"<b>{edu.get('degree','')}</b>"
+            if edu.get("stream"):
+                degree_line += f" in <b>{edu['stream']}</b>"
+            if edu.get("university"):
+                degree_line += f", {edu['university']}"
+            if edu.get("graduation_year"):
+                degree_line += f" ({edu['graduation_year']})"
+
+            if edu.get("cgpa"):
+                cgpa_text = f"<b>CGPA/Percentage:</b> {edu['cgpa']}"
+                line_width = stringWidth(degree_line, "Helvetica", 11)
+
+                if line_width < max_width:
+                    # Left = degree/university, Right = CGPA
+                    table = Table(
+                        [[Paragraph(degree_line, styles["ContentText"]),
+                        Paragraph(cgpa_text, styles["ContentText"])]],
+                        colWidths=[None, 130]
+                    )
+                    table.setStyle(TableStyle([
+                        ("ALIGN", (0, 0), (0, 0), "LEFT"),
+                        ("ALIGN", (1, 0), (1, 0), "RIGHT"),
+                        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                        ("TOPPADDING", (0, 0), (-1, -1), 0),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+                    ]))
+                    story.append(table)
+                else:
+                    # Too long → CGPA on next line, no indent
+                    story.append(Paragraph(degree_line, styles["ContentText"]))
+                    story.append(Paragraph(cgpa_text, styles["ContentText"]))
+            else:
+                story.append(Paragraph(degree_line, styles["ContentText"]))
+
+            # Description (bullets)
             if edu.get("description"):
                 for line in edu["description"].split("\n"):
                     if line.strip():
                         story.append(Paragraph(line, styles["BulletText"]))
+
+
+
 
     # Experience
     if data.get("experience"):
