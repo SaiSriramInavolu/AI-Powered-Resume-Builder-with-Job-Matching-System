@@ -158,12 +158,6 @@ elif page_selection == "Resume Builder":
         st.session_state.education_entries = []
     if 'project_entries' not in st.session_state:
         st.session_state.project_entries = []
-    if 'certification_entries' not in st.session_state:
-        st.session_state.certification_entries = []
-    if 'language_entries' not in st.session_state:
-        st.session_state.language_entries = []
-    if 'award_entries' not in st.session_state:
-        st.session_state.award_entries = []
 
     with st.form("resume_form"):
         name = st.text_input("Full Name")
@@ -224,52 +218,6 @@ elif page_selection == "Resume Builder":
                 st.session_state.project_entries.append({})
                 st.rerun()
 
-        # --- Certifications Section ---
-        with st.expander("Certifications", expanded=True):
-            for i, entry in enumerate(st.session_state.certification_entries):
-                with st.container():
-                    st.write(f"Certification #{i + 1}")
-                    entry['name'] = st.text_input(f"Certification Name", key=f"cert_name_{i}")
-                    entry['organization'] = st.text_input(f"Issuing Organization", key=f"cert_org_{i}")
-                    entry['date_issued'] = st.text_input(f"Date Issued (e.g., Month Year)", key=f"cert_date_{i}")
-                    if st.form_submit_button(f"Remove Certification #{i + 1}"):
-                        st.session_state.certification_entries.pop(i)
-                        st.rerun()
-            add_cert_button_label = "Add Certification" if len(st.session_state.certification_entries) == 0 else "Add another Certification"
-            if st.form_submit_button(add_cert_button_label):
-                st.session_state.certification_entries.append({})
-                st.rerun()
-
-        # --- Languages Section ---
-        with st.expander("Languages", expanded=True):
-            for i, entry in enumerate(st.session_state.language_entries):
-                with st.container():
-                    st.write(f"Language #{i + 1}")
-                    entry['language'] = st.text_input(f"Language Name", key=f"lang_name_{i}")
-                    entry['proficiency'] = st.text_input(f"Proficiency (e.g., Native, Fluent, Conversational)", key=f"lang_prof_{i}")
-                    if st.form_submit_button(f"Remove Language #{i + 1}"):
-                        st.session_state.language_entries.pop(i)
-                        st.rerun()
-            add_lang_button_label = "Add Language" if len(st.session_state.language_entries) == 0 else "Add another Language"
-            if st.form_submit_button(add_lang_button_label):
-                st.session_state.language_entries.append({})
-                st.rerun()
-
-        # --- Awards/Honors Section ---
-        with st.expander("Awards/Honors", expanded=True):
-            for i, entry in enumerate(st.session_state.award_entries):
-                with st.container():
-                    st.write(f"Award/Honor #{i + 1}")
-                    entry['name'] = st.text_input(f"Award Name", key=f"award_name_{i}")
-                    entry['organization'] = st.text_input(f"Issuing Organization", key=f"award_org_{i}")
-                    entry['date'] = st.text_input(f"Date (e.g., Month Year)", key=f"award_date_{i}")
-                    if st.form_submit_button(f"Remove Award/Honor #{i + 1}"):
-                        st.session_state.award_entries.pop(i)
-                        st.rerun()
-            add_award_button_label = "Add Award/Honor" if len(st.session_state.award_entries) == 0 else "Add another Award/Honor"
-            if st.form_submit_button(add_award_button_label):
-                st.session_state.award_entries.append({})
-                st.rerun()
 
         skills = st.text_area("Skills (comma-separated)")
 
@@ -286,9 +234,6 @@ elif page_selection == "Resume Builder":
             "experience": st.session_state.experience_entries,
             "education": st.session_state.education_entries,
             "projects": st.session_state.project_entries,
-            "certifications": st.session_state.certification_entries,
-            "languages": st.session_state.language_entries,
-            "awards": st.session_state.award_entries,
             "skills": skills,
         }
         pdf_buffer = create_pdf_resume(resume_data)
