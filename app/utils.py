@@ -8,7 +8,7 @@ RESULTS_FILE = "match_results.json"
 # Configure logging
 log_file = "app.log"
 logging.basicConfig(
-    level=logging.INFO, # Default level for console output
+    level=logging.DEBUG, # Default level for console output
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(log_file),
