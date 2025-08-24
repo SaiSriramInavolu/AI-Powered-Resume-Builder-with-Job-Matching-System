@@ -114,3 +114,5 @@ dmypy.json
 
 # pytype
 .pytype/
+
+chroma_db/
