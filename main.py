@@ -3,34 +3,50 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 import plotly.express as px
-import graphviz # Import graphviz
-
-# Import functions from the new library file
-from core.agent_functions import create_graph, get_graph_representation
-
+import graphviz 
 # Import functions from core and app/utils
+from core.agent_functions import create_graph, get_graph_representation
+from core.welcome import show_welcome
 from core.resume_generator import create_pdf_resume
 from app.utils import save_match_result, load_match_results, logger
 
-load_dotenv() # Load environment variables at the application start
+load_dotenv() 
 
-st.set_page_config(layout="wide")
-st.title("✨ AI-Powered Resume Matcher & Builder ✨")
-st.subheader("Find the perfect candidate, or the perfect job!")
+if "page_selection" not in st.session_state:
+    st.session_state.page_selection = "Welcome"
 
-# Sidebar for navigation
-st.sidebar.title("Navigation")
+# Handle redirection from welcome page buttons
+if "next_page" in st.session_state:
+    st.session_state.page_selection = st.session_state.next_page
+    del st.session_state["next_page"]
+    st.rerun()
+
 page_selection = st.sidebar.radio(
     "Go to",
-    ["Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"]
+    ["Welcome", "Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"],
+    index=["Welcome", "Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"].index(
+        st.session_state.page_selection
+    ),
+    key="page_selection"  # sync radio with session state
 )
+
+
+
+
+
 
 # Initialize google_api_key in session state if it's not already there
 if 'google_api_key' not in st.session_state:
     st.session_state.google_api_key = os.getenv("GOOGLE_API_KEY", "")
 
+
+
+# --- Welcome Page ---
+if page_selection == "Welcome":
+    show_welcome()
+
 # --- Resume Matcher Page ---
-if page_selection == "Resume Matcher":
+elif page_selection == "Resume Matcher":
     st.header("AI-Powered Resume Matcher")
 
     google_api_key = st.session_state.google_api_key
