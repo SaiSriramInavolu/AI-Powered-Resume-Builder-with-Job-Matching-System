@@ -103,7 +103,7 @@ def create_pdf_resume(data: dict) -> BytesIO:
     styles.add(ParagraphStyle(
         name="BulletText",
         fontSize=11,
-        leading=13,  # slightly tighter like your resume
+        leading=13,  
         fontName="Helvetica",
         alignment=TA_LEFT,
         leftIndent=15,
@@ -119,10 +119,9 @@ def create_pdf_resume(data: dict) -> BytesIO:
 
     story = []
 
-    # Name
+   
     story.append(Paragraph(data.get("name", ""), styles["ResumeName"]))
 
-    # Contact Info with GitHub/LinkedIn hyperlinks
     contact_items = []
     if data.get("phone"):
         contact_items.append(data["phone"])
@@ -193,11 +192,11 @@ def create_pdf_resume(data: dict) -> BytesIO:
             else:
                 story.append(Paragraph(degree_line, styles["ContentText"]))
 
-            # Description (bullets)
-            if edu.get("description"):
-                for line in edu["description"].split("\n"):
-                    if line.strip():
-                        story.append(Paragraph(line, styles["BulletText"]))
+            # # Description (bullets)
+            # if edu.get("description"):
+            #     for line in edu["description"].split("\n"):
+            #         if line.strip():
+            #             story.append(Paragraph(line, styles["BulletText"]))
 
 
 
@@ -256,7 +255,7 @@ def create_pdf_resume(data: dict) -> BytesIO:
                 styles["ContentText"]
             ))
 
-    # Awards
+    
     if data.get("awards"):
         add_section("AWARDS & HONORS")
         for award in data["awards"]:

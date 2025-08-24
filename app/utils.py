@@ -5,7 +5,7 @@ import logging
 
 RESULTS_FILE = "match_results.json"
 
-# Configure logging
+
 log_file = "app.log"
 logging.basicConfig(
     level=logging.DEBUG, # Default level for console output

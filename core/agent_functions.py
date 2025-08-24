@@ -10,12 +10,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from app.utils import logger
 from core.vector_db import VectorDB
 
-# Initialize VectorDB
 vector_db = VectorDB()
 
 class GraphState(TypedDict):
-    resume_file: Any # Keep for file uploads
-    resume_text: str # New: for text input from DB
+    resume_file: Any
+    resume_text: str
     jd_text: str
     resume_data: dict
     jd_data: dict
@@ -38,7 +37,6 @@ def resume_parser_node(state: GraphState):
         resume_data = parse_text_resume(resume_text)
     else:
         logger.error("No resume_file or resume_text provided to resume_parser_node.")
-        # Return empty data or raise an error, depending on desired behavior
         return {"resume_data": {}}
 
     return {"resume_data": resume_data}
@@ -55,23 +53,21 @@ def matcher_node(state: GraphState):
     logger.info("---MATCHING RESUME TO JOB DESCRIPTION---")
     resume_text = state["resume_data"]["text"]
     jd_text = state["jd_data"]["text"]
-    resume_doc_id = state["resume_data"].get("id") # Get the document ID from parsed resume data
+    resume_doc_id = state["resume_data"].get("id")
 
-    # Query vector DB for semantically similar resumes based on JD
-    # We'll retrieve more results than strictly needed to ensure we capture relevant ones
-    # even if their exact score isn't top-tier in the initial retrieval.
+
     retrieved_results = vector_db.query_documents(jd_text, n_results=10)
     retrieved_ids = [res for res in retrieved_results["ids"]]
 
-    similarity_score = 0.0 # Default to 0 if not semantically relevant
+    similarity_score = 0.0 
 
     if resume_doc_id and resume_doc_id in retrieved_ids:
         logger.info(f"Resume {resume_doc_id} found in top semantically relevant resumes.")
-        # Use the vector_db's embedding model for consistency
+
         similarity_score = match_resume_to_jd(resume_text, jd_text, vector_db.model)
     else:
         logger.info(f"Resume {resume_doc_id} not found in top semantically relevant resumes. Assigning 0 score.")
-        # If the resume is not semantically relevant, assign a very low score
+        
         similarity_score = 0.0
 
     return {"similarity_score": similarity_score}
@@ -123,7 +119,7 @@ def create_graph():
     workflow.add_edge("matcher", "scorer")
     workflow.add_edge("scorer", "content_enhancement")
     workflow.add_edge("content_enhancement", END)
-    workflow.add_edge(START, "resume_parser") # Explicitly add edge from START
+    workflow.add_edge(START, "resume_parser") 
 
     return workflow
 
@@ -138,17 +134,15 @@ def get_graph_representation(compiled_workflow):
     for edge in graph.edges:
         edges.append((edge.source, edge.target))
     
-    # Handle the START node explicitly
     if START in nodes:
         nodes.remove(START)
-        nodes.insert(0, "_start_") # Use a string representation for START and place at beginning
+        nodes.insert(0, "_start_") 
 
-    # Handle the END node explicitly
     if END in nodes:
         nodes.remove(END)
-        nodes.append("_end_") # Use a string representation for END
+        nodes.append("_end_")
 
-    # Adjust edges for START and END nodes
+   
     for i, (start, end) in enumerate(edges):
         if start == START:
             edges[i] = ("_start_", end)

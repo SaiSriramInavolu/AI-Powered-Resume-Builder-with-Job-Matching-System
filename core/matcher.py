@@ -1,5 +1,5 @@
 from sentence_transformers import util
-from sentence_transformers import SentenceTransformer # Keep import for type hinting
+from sentence_transformers import SentenceTransformer
 
 def match_resume_to_jd(resume_text: str, jd_text: str, embedding_model: SentenceTransformer) -> float:
     """Matches a resume to a job description and returns a similarity score.

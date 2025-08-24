@@ -30,7 +30,7 @@ def parse_pdf_resume(file: IO[bytes]) -> dict:
     for page in reader.pages:
         text += page.extract_text()
 
-    return parse_text_resume(text) # Reuse the text parsing logic
+    return parse_text_resume(text) 
 
 
 def parse_text_resume(text: str) -> dict:
@@ -44,17 +44,15 @@ def parse_text_resume(text: str) -> dict:
     """
     doc = nlp(text)
 
-    # Basic extraction for demonstration. You might want more sophisticated NER/parsing.
-    skills = [ent.text for ent in doc.ents if ent.label_ in ['ORG', 'PRODUCT', 'GPE', 'NORP']] # Expanded entities for skills
-    keywords = [token.text for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'PROPN', 'ADJ']] # Expanded POS for keywords
-
+    skills = [ent.text for ent in doc.ents if ent.label_ in ['ORG', 'PRODUCT', 'GPE', 'NORP']] 
+    keywords = [token.text for token in doc if not token.is_stop and not token.is_punct and token.pos_ in ['NOUN', 'PROPN', 'ADJ']] 
     parsed_data = {
         'text': text,
         'skills': list(set(skills)),
         'keywords': list(set(keywords))
     }
 
-    # Add to vector DB
+    
     document_id = hashlib.sha256(text.encode()).hexdigest()
     combined_text = f"""Skills: {", ".join(parsed_data["skills"])}. Keywords: {", ".join(parsed_data["keywords"])}. {parsed_data["text"]}"""
     vector_db.add_document(document_id, combined_text, {"type": "resume", "id": document_id})

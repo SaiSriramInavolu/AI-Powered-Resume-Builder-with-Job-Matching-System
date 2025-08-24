@@ -2,7 +2,6 @@ import spacy
 import hashlib
 from core.vector_db import VectorDB
 
-# Initialize VectorDB
 vector_db = VectorDB()
 
 def parse_text_job_description(text: str) -> dict:
@@ -26,7 +25,7 @@ def parse_text_job_description(text: str) -> dict:
         'keywords': list(set(keywords))
     }
 
-    # Add to vector DB
+    
     document_id = hashlib.sha256(text.encode()).hexdigest()
     combined_text = f"""Skills: {", ".join(parsed_data["skills"])}. Keywords: {", ".join(parsed_data["keywords"])}. {parsed_data["text"]}"""
     vector_db.add_document(document_id, combined_text, {"type": "job_description", "id": document_id})

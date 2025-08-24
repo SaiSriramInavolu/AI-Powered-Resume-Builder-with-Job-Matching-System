@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import plotly.express as px
 import graphviz 
+
 # Import functions from core and app/utils
 from core.agent_functions import create_graph, get_graph_representation
 from core.welcome import show_welcome
@@ -27,7 +28,7 @@ page_selection = st.sidebar.radio(
     index=["Welcome", "Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"].index(
         st.session_state.page_selection
     ),
-    key="page_selection"  # sync radio with session state
+    key="page_selection"  
 )
 
 
@@ -61,7 +62,6 @@ elif page_selection == "Resume Matcher":
         st.header("Paste Job Description")
         job_description = st.text_area("Description", height=300)
 
-    # Initialize session state for results
     if 'all_match_results_session' not in st.session_state:
         st.session_state.all_match_results_session = None
     if 'df_results_session' not in st.session_state:
@@ -126,9 +126,8 @@ elif page_selection == "Resume Matcher":
         else:
             st.error("Please upload at least one resume and a job description.")
 
-    # Display results if available in session state
     if st.session_state.df_results_session is not None:
-        df_results = st.session_state.df_results_session # Use the cached DataFrame
+        df_results = st.session_state.df_results_session 
 
         st.subheader("Comparison Results")
 
@@ -136,9 +135,9 @@ elif page_selection == "Resume Matcher":
             "Show top N matching resumes:",
             min_value=1,
             max_value=len(df_results),
-            value=min(5, len(df_results)), # Default to 5 or max available
+            value=min(5, len(df_results)), 
             step=1,
-            key="num_best_resumes_input" # Add a key to prevent warning
+            key="num_best_resumes_input" 
         )
         
         st.dataframe(df_results.head(num_best_resumes).drop(columns=["Enhancement Suggestions", "Timestamp"]))
@@ -167,7 +166,6 @@ elif page_selection == "Resume Matcher":
 elif page_selection == "Resume Builder":
     st.header("AI-Powered Resume Builder")
 
-    # Initialize session state for lists of entries
     if 'experience_entries' not in st.session_state:
         st.session_state.experience_entries = []
     if 'education_entries' not in st.session_state:
@@ -193,7 +191,7 @@ elif page_selection == "Resume Builder":
                     entry['university'] = st.text_input(f"University", key=f"edu_university_{i}")
                     entry['cgpa'] = st.text_input(f"CGPA/Percentage", key=f"edu_cgpa_{i}")
                     entry['graduation_year'] = st.text_input(f"Graduation Year", key=f"edu_grad_year_{i}")
-                    entry['description'] = st.text_area(f"Description (e.g., coursework, honors)", key=f"edu_desc_{i}")
+                    # entry['description'] = st.text_area(f"Description (e.g., coursework, honors)", key=f"edu_desc_{i}")
                     if st.form_submit_button(f"Remove Education #{i + 1}"):
                         st.session_state.education_entries.pop(i)
                         st.rerun()
@@ -264,7 +262,7 @@ elif page_selection == "Resume Builder":
 
         from core.resume_generator import generate_ai_summary
 
-        if not summary:  # No summary → auto-generate
+        if not summary:  
             with st.spinner("Generating professional summary with AI..."):
                 resume_data["summary"] = generate_ai_summary(resume_data)
                 st.success("AI-generated summary added!")
@@ -293,7 +291,6 @@ elif page_selection == "Workflow Visualization":
     compiled_workflow = workflow.compile()
     graph_representation = get_graph_representation(compiled_workflow)
 
-    # Define node descriptions and colors for a unique and cool look
     node_descriptions = {
         "_start_": "The entry point of the workflow. Initializes the GraphState.",
         "resume_parser": "Parses the uploaded PDF resume or text resume. Extracts text, skills, and keywords, and adds the resume data to the vector database. Outputs `resume_data` to the GraphState.",
@@ -304,7 +301,6 @@ elif page_selection == "Workflow Visualization":
         "_end_": "The end point of the workflow. The final results are available in the GraphState."
     }
 
-    # Enhanced color palette and styling
     node_styles = {
         "_start_": {"shape": "circle", "fillcolor": "#8BC34A", "style": "filled", "fontcolor": "#FFFFFF", "width": "0.8", "height": "0.8"}, # Green
         "resume_parser": {"shape": "box", "fillcolor": "#FFEB3B", "style": "filled", "fontcolor": "#333333"}, # Yellow
@@ -317,14 +313,13 @@ elif page_selection == "Workflow Visualization":
 
     dot = graphviz.Digraph(comment='LangGraph Workflow', graph_attr={'rankdir': 'LR', 'bgcolor': '#F8F8F8', 'fontname': 'Helvetica'})
 
-    # Add nodes
     for node_name in graph_representation["nodes"]:
         label = node_name.replace('_', ' ').title()
         description = node_descriptions.get(node_name, "No description available.")
         style = node_styles.get(node_name, node_styles["resume_parser"]) # Default to resume_parser style
         dot.node(node_name, label, tooltip=description, **style)
     
-    # Add edges
+    
     for start_node, end_node in graph_representation["edges"]:
         dot.edge(str(start_node), str(end_node))
 

@@ -105,7 +105,7 @@ def create_graph():
     workflow.add_edge("scorer", "content_enhancement")
     workflow.add_edge("content_enhancement", END)
 
-    # Add a separate entry point and edge for resume generation
+    
     workflow.add_edge("resume_generation", END)
 
     workflow.set_entry_point("resume_parser")

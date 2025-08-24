@@ -22,4 +22,4 @@ def score_match(resume_data: dict, jd_data: dict, similarity_score: float) -> fl
     # Weighted average: 50% skill score, 30% similarity score, 20% keyword score
     final_score = (0.5 * skill_score) + (0.3 * similarity_score) + (0.2 * keyword_score)
 
-    return min(final_score, 1.0)  # Ensure score is not above 1.0
+    return min(final_score, 1.0)
