@@ -5,6 +5,79 @@ import pandas as pd
 import plotly.express as px
 import graphviz 
 
+st.markdown("""
+<style>
+    /* General styling */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #FAFAFA; 
+    }
+
+    /* Main content area */
+    .stApp {
+        background-color: #0E1117; 
+    }
+
+    /* Headers */
+    h1, h2, h3, h4, h5, h6 {
+        color: #1E90FF; 
+    }
+
+    /* Buttons */
+    .stButton>button {
+        background-color: #1E90FF; 
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .stButton>button:hover {
+        background-color: #4169E1; 
+    }
+
+    /* Sidebar radio buttons */
+    .st-emotion-cache-10o4y27 { /
+        color: #FAFAFA;
+    }
+    .st-emotion-cache-10o4y27 .st-emotion-cache-1g60qae { 
+        color: #FAFAFA;
+    }
+    .st-emotion-cache-10o4y27 .st-emotion-cache-1g60qae:hover {
+        color: #1E90FF;
+    }
+    .st-emotion-cache-10o4y27 .st-emotion-cache-1g60qae.st-emotion-cache-1g60qae-selected {
+        color: #1E90FF;
+        font-weight: bold;
+    }
+
+    /* Text areas and inputs */
+    .stTextArea textarea, .stTextInput input {
+        background-color: #262730; /* Secondary background */
+        color: #FAFAFA;
+        border-radius: 8px;
+        border: 1px solid #1E90FF;
+    }
+
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: #262730;
+        color: #1E90FF;
+        border-radius: 8px;
+        padding: 10px;
+    }
+    .streamlit-expanderContent {
+        background-color: #0E1117;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
 # Import functions from core and app/utils
 from core.agent_functions import create_graph, get_graph_representation
 from core.welcome import show_welcome

@@ -1,0 +1,7 @@
+
+[theme]
+primaryColor="#1E90FF" # Dodger Blue
+backgroundColor="#0E1117" # Dark background
+secondaryBackgroundColor="#262730" # Slightly lighter dark for secondary elements
+textColor="#FAFAFA" # White text
+font="sans serif"
