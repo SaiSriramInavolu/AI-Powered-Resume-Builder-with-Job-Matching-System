@@ -48,7 +48,7 @@ if page_selection == "Welcome":
 
 # --- Resume Matcher Page ---
 elif page_selection == "Resume Matcher":
-    st.header("AI-Powered Resume Matcher")
+    st.header("AI-Powered Resume Matcher 🔍💼")
 
     google_api_key = st.session_state.google_api_key
 
@@ -164,7 +164,7 @@ elif page_selection == "Resume Matcher":
 
 # --- Resume Builder Page ---
 elif page_selection == "Resume Builder":
-    st.header("AI-Powered Resume Builder")
+    st.header("AI-Powered Resume Builder 📄✨")
 
     if 'experience_entries' not in st.session_state:
         st.session_state.experience_entries = []
@@ -236,7 +236,6 @@ elif page_selection == "Resume Builder":
 
         skills = st.text_area("Skills (comma-separated)")
 
-        # --- AI refinement choice INSIDE form ---
         use_ai = None
         if summary:
             use_ai = st.radio(
@@ -271,7 +270,6 @@ elif page_selection == "Resume Builder":
                 resume_data["summary"] = generate_ai_summary(resume_data, user_summary=summary)
                 st.success("AI-refined summary added!")
 
-        # --- Generate PDF ---
         pdf_buffer = create_pdf_resume(resume_data)
         st.download_button(
             label="Download Resume as PDF",
@@ -286,7 +284,7 @@ elif page_selection == "Resume Builder":
 
 # --- Workflow Visualization Page ---
 elif page_selection == "Workflow Visualization":
-    st.header("LangGraph Workflow Visualization")
+    st.header("LangGraph Workflow Visualization 🔄📊")
     workflow = create_graph()
     compiled_workflow = workflow.compile()
     graph_representation = get_graph_representation(compiled_workflow)
@@ -327,7 +325,7 @@ elif page_selection == "Workflow Visualization":
 
 # --- Analytics Dashboard Page ---
 elif page_selection == "Analytics Dashboard":
-    st.header("Match Analytics Dashboard")
+    st.header("Match Analytics Dashboard 📊📈")
     results = load_match_results()
     if results:
         df = pd.DataFrame(results)

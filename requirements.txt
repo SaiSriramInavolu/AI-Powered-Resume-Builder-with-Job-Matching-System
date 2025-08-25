@@ -26,3 +26,4 @@ Pillow
 # For testing
 pytest
 pytest-mock
+Pillow

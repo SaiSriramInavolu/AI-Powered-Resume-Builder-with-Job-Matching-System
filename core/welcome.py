@@ -1,7 +1,7 @@
 import streamlit as st
 
 def show_welcome():
-    st.title("Welcome to the Resume Intelligence Platform 👋")
+    st.title("Resume Intelligence Hub 🤖")
 
     st.markdown("""
         ### One-stop platform for building, analyzing, and matching resumes with job descriptions.

@@ -8,11 +8,11 @@ RESULTS_FILE = "match_results.json"
 
 log_file = "app.log"
 logging.basicConfig(
-    level=logging.DEBUG, # Default level for console output
+    level=logging.DEBUG, 
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(log_file),
-        logging.StreamHandler() # Also log to console
+        logging.StreamHandler() 
     ]
 )
 

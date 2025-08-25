@@ -16,12 +16,11 @@ def generate_ai_summary(data: dict, user_summary: str = "") -> str:
     """
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
-        return "Experienced professional with a passion for technology and innovation."  # fallback
+        return "Experienced professional with a passion for technology and innovation."  
 
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel("gemini-2.5-flash")
 
-    # Build context
     education = "; ".join(
         [f"{e.get('degree','')} in {e.get('stream','')} from {e.get('university','')} ({e.get('graduation_year','')})"
          for e in data.get("education", []) if e]
@@ -36,7 +35,6 @@ def generate_ai_summary(data: dict, user_summary: str = "") -> str:
     )
     skills = data.get("skills", "")
 
-    # Construct prompt
     if user_summary:
         prompt = f"""The user has written this summary:
 {user_summary}
@@ -153,7 +151,7 @@ def create_pdf_resume(data: dict) -> BytesIO:
     # Education
     if data.get("education"):
         add_section("EDUCATION")
-        max_width = 400  # threshold in points (~5.5 inches of text area)
+        max_width = 400  
 
         for edu in data["education"]:
             degree_line = f"<b>{edu.get('degree','')}</b>"
