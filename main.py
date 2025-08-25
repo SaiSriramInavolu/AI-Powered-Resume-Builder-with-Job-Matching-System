@@ -5,111 +5,134 @@ import pandas as pd
 import plotly.express as px
 import graphviz 
 
-st.markdown("""
-<style>
-    /* General styling */
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #FAFAFA; 
-    }
-
-    /* Main content area */
-    .stApp {
-        background-color: #0E1117; 
-    }
-
-    /* Headers */
-    h1, h2, h3, h4, h5, h6 {
-        color: #1E90FF; 
-    }
-
-    /* Buttons */
-    .stButton>button {
-        background-color: #1E90FF; 
-        color: white;
-        border-radius: 8px;
-        border: none;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .stButton>button:hover {
-        background-color: #4169E1; 
-    }
-
-    /* Sidebar radio buttons */
-    .st-emotion-cache-10o4y27 { /
-        color: #FAFAFA;
-    }
-    .st-emotion-cache-10o4y27 .st-emotion-cache-1g60qae { 
-        color: #FAFAFA;
-    }
-    .st-emotion-cache-10o4y27 .st-emotion-cache-1g60qae:hover {
-        color: #1E90FF;
-    }
-    .st-emotion-cache-10o4y27 .st-emotion-cache-1g60qae.st-emotion-cache-1g60qae-selected {
-        color: #1E90FF;
-        font-weight: bold;
-    }
-
-    /* Text areas and inputs */
-    .stTextArea textarea, .stTextInput input {
-        background-color: #262730; /* Secondary background */
-        color: #FAFAFA;
-        border-radius: 8px;
-        border: 1px solid #1E90FF;
-    }
-
-    /* Expander */
-    .streamlit-expanderHeader {
-        background-color: #262730;
-        color: #1E90FF;
-        border-radius: 8px;
-        padding: 10px;
-    }
-    .streamlit-expanderContent {
-        background-color: #0E1117;
-        border-radius: 8px;
-        padding: 10px;
-    }
-
-</style>
-""", unsafe_allow_html=True)
-
-# Import functions from core and app/utils
 from core.agent_functions import create_graph, get_graph_representation
 from core.welcome import show_welcome
 from core.resume_generator import create_pdf_resume
 from app.utils import save_match_result, load_match_results, logger
+
+st.markdown(f"""
+<style>
+    /* General styling */
+    body {{
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #FAFAFA; 
+    }}
+
+    /* Main content area */
+    .stApp {{
+        background-color: #0E1117; 
+    }}
+
+    /* Headers */
+    h1, h2, h3, h4, h5, h6 {{
+        color: #1E90FF; 
+    }}
+
+    /* Buttons */
+    .stButton>button {{
+        background-color: #1E90FF; 
+        color: white;
+        border-radius: 8px;
+        border: 1px solid #1E90FF;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }}
+
+    .stButton>button:hover {{
+        background-color: #4169E1; 
+    }}
+
+    /* Text areas and inputs */
+    .stTextArea textarea, .stTextInput input {{
+        background-color: #262730; /* Secondary background */
+        color: #FAFAFA;
+        border-radius: 8px;
+        border: 1px solid #1E90FF;
+    }}
+
+    /* Expander */
+    .streamlit-expanderHeader {{
+        background-color: #262730;
+        color: #1E90FF;
+        border-radius: 8px;
+        padding: 10px;
+    }}
+    .streamlit-expanderContent {{
+        background-color: #0E1117;
+        border-radius: 8px;
+        padding: 10px;
+    }}
+
+    /* Top Navigation Bar Styling */
+    div[data-testid="stHorizontalBlock"] > div .stButton>button {{
+        background-color: transparent;
+        color: #FAFAFA;
+        border: 1px solid #1E90FF;
+        border-radius: 8px;
+        padding: 10px 5px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }}
+
+    div[data-testid="stHorizontalBlock"] > div .stButton>button:hover {{
+        background-color: #1E90FF;
+        color: white;
+    }}
+
+    div[data-testid="stHorizontalBlock"] > div .stButton>button[aria-pressed="true"], 
+    div[data-testid="stHorizontalBlock"] > div .stButton>button:active {{
+        background-color: #1E90FF;
+        color: white;
+        font-weight: bold;
+    }}
+
+    hr {{
+        border-top: 2px solid #1E90FF;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }}
+</style>
+""", unsafe_allow_html=True)
 
 load_dotenv() 
 
 if "page_selection" not in st.session_state:
     st.session_state.page_selection = "Welcome"
 
-# Handle redirection from welcome page buttons
 if "next_page" in st.session_state:
     st.session_state.page_selection = st.session_state.next_page
     del st.session_state["next_page"]
     st.rerun()
 
-page_selection = st.sidebar.radio(
-    "Go to",
-    ["Welcome", "Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"],
-    index=["Welcome", "Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"].index(
-        st.session_state.page_selection
-    ),
-    key="page_selection"  
-)
+page_selection = st.session_state.page_selection
+
+# --- Navigation ---
+PAGES = ["Welcome", "Resume Matcher", "Resume Builder", "Workflow Visualization", "Analytics Dashboard"]
+
+cols = st.columns(len(PAGES))
+
+for i, page in enumerate(PAGES):
+    with cols[i]:
+        if st.button(page, key=f"nav_button_{page}", use_container_width=True):
+            st.session_state.page_selection = page
+            st.rerun()
+
+st.markdown("<hr>", unsafe_allow_html=True)
 
 
 
+st.markdown("""
+<style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+</style>
+""", unsafe_allow_html=True)
 
 
-
-# Initialize google_api_key in session state if it's not already there
 if 'google_api_key' not in st.session_state:
     st.session_state.google_api_key = os.getenv("GOOGLE_API_KEY", "")
 
